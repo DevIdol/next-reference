@@ -1,9 +1,83 @@
 {
-  "id": "f566f40a-b6fc-49d5-b2cb-8d0e74a7ba95",
+  "id": "97190e63-632a-4c96-8f07-8508458ffda7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.categories": {
+      "name": "categories",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "categories_name_unique": {
+          "name": "categories_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.colors": {
+      "name": "colors",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hex": {
+          "name": "hex",
+          "type": "varchar(7)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "colors_name_unique": {
+          "name": "colors_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.complaints": {
       "name": "complaints",
       "schema": "",
@@ -41,6 +115,18 @@
           "notNull": false,
           "default": "'pending'"
         },
+        "resolved_by": {
+          "name": "resolved_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "resolved_at": {
+          "name": "resolved_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -76,83 +162,21 @@
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
+        },
+        "complaints_resolved_by_users_id_fk": {
+          "name": "complaints_resolved_by_users_id_fk",
+          "tableFrom": "complaints",
+          "tableTo": "users",
+          "columnsFrom": [
+            "resolved_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.daily_stock_records": {
-      "name": "daily_stock_records",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "date": {
-          "name": "date",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "warehouse_branch": {
-          "name": "warehouse_branch",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "category": {
-          "name": "category",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "model": {
-          "name": "model",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "opening_balance": {
-          "name": "opening_balance",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "in": {
-          "name": "in",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "out": {
-          "name": "out",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "closing_balance": {
-          "name": "closing_balance",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -180,13 +204,7 @@
           "name": "driver_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": true
-        },
-        "vehicle_plate_number": {
-          "name": "vehicle_plate_number",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "delivery_route": {
           "name": "delivery_route",
@@ -201,6 +219,13 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'pending'"
+        },
+        "priority": {
+          "name": "priority",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 1
         },
         "delivery_date": {
           "name": "delivery_date",
@@ -231,12 +256,91 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "deliveries_driver_id_users_id_fk": {
-          "name": "deliveries_driver_id_users_id_fk",
+        "deliveries_driver_id_drivers_id_fk": {
+          "name": "deliveries_driver_id_drivers_id_fk",
           "tableFrom": "deliveries",
-          "tableTo": "users",
+          "tableTo": "drivers",
           "columnsFrom": [
             "driver_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.drivers": {
+      "name": "drivers",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "license_number": {
+          "name": "license_number",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "vehicle_plate_number": {
+          "name": "vehicle_plate_number",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "order_limit": {
+          "name": "order_limit",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 5
+        },
+        "preferred_routes": {
+          "name": "preferred_routes",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "drivers_user_id_users_id_fk": {
+          "name": "drivers_user_id_users_id_fk",
+          "tableFrom": "drivers",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -266,23 +370,25 @@
           "name": "order_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
-        "user_id": {
-          "name": "user_id",
-          "type": "uuid",
+        "payment_type": {
+          "name": "payment_type",
+          "type": "payment_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'cash_on_delivery'"
+        },
+        "total_amount_usd": {
+          "name": "total_amount_usd",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": true
         },
-        "amount_usd": {
-          "name": "amount_usd",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "amount_mmk": {
-          "name": "amount_mmk",
-          "type": "varchar(50)",
+        "total_amount_mmk": {
+          "name": "total_amount_mmk",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": false
         },
@@ -305,44 +411,10 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "invoices_order_id_orders_id_fk": {
-          "name": "invoices_order_id_orders_id_fk",
-          "tableFrom": "invoices",
-          "tableTo": "orders",
-          "columnsFrom": [
-            "order_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "invoices_user_id_users_id_fk": {
-          "name": "invoices_user_id_users_id_fk",
-          "tableFrom": "invoices",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -372,21 +444,27 @@
           "primaryKey": false,
           "notNull": true
         },
+        "color_id": {
+          "name": "color_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
         "quantity": {
           "name": "quantity",
-          "type": "varchar(50)",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
         "price_usd": {
           "name": "price_usd",
-          "type": "varchar(50)",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": true
         },
         "price_mmk": {
           "name": "price_mmk",
-          "type": "varchar(50)",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": false
         }
@@ -412,6 +490,19 @@
           "tableTo": "products",
           "columnsFrom": [
             "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "order_items_color_id_colors_id_fk": {
+          "name": "order_items_color_id_colors_id_fk",
+          "tableFrom": "order_items",
+          "tableTo": "colors",
+          "columnsFrom": [
+            "color_id"
           ],
           "columnsTo": [
             "id"
@@ -449,6 +540,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "invoice_id": {
+          "name": "invoice_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
         "status": {
           "name": "status",
           "type": "order_status",
@@ -459,13 +556,13 @@
         },
         "total_amount_usd": {
           "name": "total_amount_usd",
-          "type": "varchar(50)",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": true
         },
         "total_amount_mmk": {
           "name": "total_amount_mmk",
-          "type": "varchar(50)",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": false
         },
@@ -518,6 +615,79 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.product_color": {
+      "name": "product_color",
+      "schema": "",
+      "columns": {
+        "product_id": {
+          "name": "product_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "color_id": {
+          "name": "color_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "stock": {
+          "name": "stock",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reserved": {
+          "name": "reserved",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "status": {
+          "name": "status",
+          "type": "stock_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'in_stock'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "product_color_product_id_products_id_fk": {
+          "name": "product_color_product_id_products_id_fk",
+          "tableFrom": "product_color",
+          "tableTo": "products",
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "product_color_color_id_colors_id_fk": {
+          "name": "product_color_color_id_colors_id_fk",
+          "tableFrom": "product_color",
+          "tableTo": "colors",
+          "columnsFrom": [
+            "color_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.products": {
       "name": "products",
       "schema": "",
@@ -543,44 +713,45 @@
         },
         "price_usd": {
           "name": "price_usd",
-          "type": "varchar(50)",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": true
         },
         "price_mmk": {
           "name": "price_mmk",
-          "type": "varchar(50)",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": false
         },
-        "category": {
-          "name": "category",
-          "type": "varchar(255)",
+        "category_id": {
+          "name": "category_id",
+          "type": "uuid",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "brand": {
           "name": "brand",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
-        },
-        "stock_quantity": {
-          "name": "stock_quantity",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "products_category_id_categories_id_fk": {
+          "name": "products_category_id_categories_id_fk",
+          "tableFrom": "products",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "category_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -610,8 +781,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "service_center_id": {
-          "name": "service_center_id",
+        "color_id": {
+          "name": "color_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -629,6 +800,18 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'pending'"
+        },
+        "processed_by": {
+          "name": "processed_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "processed_at": {
+          "name": "processed_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -666,12 +849,25 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "returns_service_center_id_service_centers_id_fk": {
-          "name": "returns_service_center_id_service_centers_id_fk",
+        "returns_color_id_colors_id_fk": {
+          "name": "returns_color_id_colors_id_fk",
           "tableFrom": "returns",
-          "tableTo": "service_centers",
+          "tableTo": "colors",
           "columnsFrom": [
-            "service_center_id"
+            "color_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "returns_processed_by_users_id_fk": {
+          "name": "returns_processed_by_users_id_fk",
+          "tableFrom": "returns",
+          "tableTo": "users",
+          "columnsFrom": [
+            "processed_by"
           ],
           "columnsTo": [
             "id"
@@ -797,36 +993,10 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
-        },
-        "business_name": {
-          "name": "business_name",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "service_center_id": {
-          "name": "service_center_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "users_service_center_id_service_centers_id_fk": {
-          "name": "users_service_center_id_service_centers_id_fk",
-          "tableFrom": "users",
-          "tableTo": "service_centers",
-          "columnsFrom": [
-            "service_center_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "users_email_unique": {
@@ -881,13 +1051,6 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
         }
       },
       "indexes": {},
@@ -944,6 +1107,15 @@
         "cancelled"
       ]
     },
+    "public.payment_type": {
+      "name": "payment_type",
+      "schema": "public",
+      "values": [
+        "cash_on_delivery",
+        "kbzpay",
+        "wavepay"
+      ]
+    },
     "public.return_status": {
       "name": "return_status",
       "schema": "public",
@@ -951,6 +1123,15 @@
         "pending",
         "processed",
         "rejected"
+      ]
+    },
+    "public.stock_status": {
+      "name": "stock_status",
+      "schema": "public",
+      "values": [
+        "in_stock",
+        "out_of_stock",
+        "reserved"
       ]
     },
     "public.user_role": {
@@ -961,8 +1142,7 @@
         "staff",
         "customer",
         "business",
-        "driver",
-        "manager"
+        "driver"
       ]
     }
   },

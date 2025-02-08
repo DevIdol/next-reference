@@ -1,0 +1,50 @@
+name: Next.js CI
+
+on:
+  pull_request:
+    types: ['opened', 'synchronize']
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22.13.1]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install specific npm version 10.9.2
+        run: npm install -g npm@10.9.2
+
+      - name: Verify Node.js and npm versions
+        run: |
+          node --version
+          npm --version
+
+      - name: Clear npm and build caches
+        run: |
+          npm cache clean --force
+          rm -rf .next
+          rm -rf build
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Build the project
+        run: npm run build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
