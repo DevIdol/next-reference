@@ -41,4 +41,5 @@ yarn-error.log*
 next-env.d.ts
 
 # Ignore Drizzle generated files (if any)
-./src/db/migrations/*
+src/db/migrations/*
+src/db/migrations/meta/*
