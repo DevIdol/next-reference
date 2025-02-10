@@ -4,8 +4,8 @@ on:
   pull_request:
     types: ['opened', 'synchronize']
   push:
-    branches-ignore:
-      - main
+    branches:
+      - develop
 
 jobs:
   build:
